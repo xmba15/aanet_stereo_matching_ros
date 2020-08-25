@@ -14,6 +14,11 @@
     git submodule update --init --recursive
 ```
 
+- conda environment
+```bash
+    conda env create --file environment.yml
+```
+
 ## 🔨 How to Build ##
 ***
 YYYYnprocYYnprocYYY

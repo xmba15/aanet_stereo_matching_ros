@@ -1,16 +1,21 @@
 #!/usr/bin/env python
 import math
+import os
 import sys
-from utils import utils
 import torch
 import torch.nn.functional as F
 from stereo_matching_interface import StereoMatcherBase
-from dataloader import transforms
-import nets
 
 
 ROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "aanet")
 sys.path.append(ROOT_DIR)
+try:
+    from utils import utils
+    import nets
+    from dataloader import transforms
+except Exception as e:
+    print(e)
+    sys.exit()
 
 
 class AANetStereoMatcherConfig(object):
@@ -57,7 +62,9 @@ class AANetStereoMatcherConfig(object):
             pass
 
         def _rospy_set(attr):
-            object.__setattr__(self, attr, rospy.get_param(self.__name__ + "/" + attr, object.__getattr__(self, attr)))
+            object.__setattr__(
+                self, attr, rospy.get_param("~" + self.__name__ + "/" + attr, object.__getattr__(self, attr))
+            )
 
         [
             _rospy_set(attr)
@@ -92,7 +99,7 @@ class AANetStereoMatcher(StereoMatcherBase):
         transform=transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize(mean=StereoMatcherBase.IMAGENET_MEAN, std=AANetStereoMatcher.IMAGENET_STD),
+                transforms.Normalize(mean=StereoMatcherBase.IMAGENET_MEAN, std=StereoMatcherBase.IMAGENET_STD),
             ]
         ),
     ):

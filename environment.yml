@@ -1,0 +1,7 @@
+name: stereo_matching
+dependencies:
+  - python >=3.6
+  - anaconda
+  - pip
+  - pip:
+      - -r file:requirements.txt

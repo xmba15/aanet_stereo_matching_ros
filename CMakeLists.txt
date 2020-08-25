@@ -7,7 +7,9 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 catkin_package(
- CATKIN_DEPENDS rospy sensor_msgs
+ CATKIN_DEPENDS
+   rospy
+   sensor_msgs
 )
 
 include_directories(

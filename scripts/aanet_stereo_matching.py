@@ -14,24 +14,74 @@ sys.path.append(ROOT_DIR)
 
 
 class AANetStereoMatcherConfig(object):
+    __name__ = "aanet"
+
     max_disp = 192  # Max disparity
+
     feature_type = "aanet"  # Type of feature extractor
+
     no_feature_mdconv = True  # Whether to use mdconv for feature extraction
+
     feature_pyramid = True  # Use pyramid feature
+
     feature_pyramid_network = True  # Use FPN
+
     feature_similarity = "correlation"  # Similarity measure for matching cost
+
     num_downsample = 2  # Number of downsample layer for feature extraction
+
     aggregation_type = "adaptive"  # Type of cost aggregation
+
     num_scales = 3  # Number of stages when using parallel aggregation
+
     num_fusions = 6  # Number of multi-scale fusions when using parallel
+
     num_stage_blocks = 1  # Number of deform blocks for ISA
+
     num_deform_blocks = 3  # Number of DeformBlocks for aggregation
+
     no_intermediate_supervision = True  # Whether to add intermediate supervision
+
     deformable_groups = 2  # Number of deformable groups
+
     mdconv_dilation = 2  # Dilation rate for deformable conv
+
     refinement_type = "stereodrnet"  # Type of refinement module
+
     disparity_multiplier = 256.0  # multipler to get the final disparity
+
     model_path = ""  # Pretrained network
+
+    def __init__(self, rospy=None):
+        if rospy is None:
+            pass
+
+        def _rospy_set(attr):
+            object.__setattr__(self, attr, rospy.get_param(self.__name__ + "/" + attr, object.__getattr__(self, attr)))
+
+        [
+            _rospy_set(attr)
+            for attr in [
+                "max_disp",
+                "feature_type",
+                "no_feature_mdconv",
+                "feature_pyramid",
+                "feature_pyramid_network",
+                "feature_similarity",
+                "num_downsample",
+                "aggregation_type",
+                "num_scales",
+                "num_fusions",
+                "num_stage_blocks",
+                "num_deform_blocks",
+                "no_intermediate_supervision",
+                "deformable_groups",
+                "mdconv_dilation",
+                "refinement_type",
+                "disparity_multiplier",
+                "model_path",
+            ]
+        ]
 
 
 class AANetStereoMatcher(StereoMatcherBase):

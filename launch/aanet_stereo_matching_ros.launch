@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="aanet_stereo_matching_ros" type="stereo_matching_node.py" name="aanet_stereo_matching_ros" output="screen" >
+      <rosparam command="load" file="$(find rosparam)/config/aanet_params.yaml" />
+    </node>
+</launch>

@@ -18,6 +18,9 @@ except Exception as e:
     sys.exit()
 
 
+__all__ = ["AANetStereoMatcher", "AANetStereoMatcherConfig"]
+
+
 class AANetStereoMatcherConfig(object):
     __name__ = "aanet"
 
@@ -53,8 +56,6 @@ class AANetStereoMatcherConfig(object):
 
     refinement_type = "stereodrnet"  # Type of refinement module
 
-    disparity_multiplier = 256.0  # multipler to get the final disparity
-
     model_path = ""  # Pretrained network
 
     def __init__(self, rospy=None):
@@ -63,7 +64,12 @@ class AANetStereoMatcherConfig(object):
 
         def _rospy_set(attr):
             object.__setattr__(
-                self, attr, rospy.get_param("~" + self.__name__ + "/" + attr, object.__getattr__(self, attr))
+                self,
+                attr,
+                rospy.get_param(
+                    "~" + self.__name__ + "/" + attr,
+                    object.__getattribute__(self, attr),
+                ),
             )
 
         [
@@ -85,7 +91,6 @@ class AANetStereoMatcherConfig(object):
                 "deformable_groups",
                 "mdconv_dilation",
                 "refinement_type",
-                "disparity_multiplier",
                 "model_path",
             ]
         ]
@@ -99,7 +104,10 @@ class AANetStereoMatcher(StereoMatcherBase):
         transform=transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize(mean=StereoMatcherBase.IMAGENET_MEAN, std=StereoMatcherBase.IMAGENET_STD),
+                transforms.Normalize(
+                    mean=StereoMatcherBase.IMAGENET_MEAN,
+                    std=StereoMatcherBase.IMAGENET_STD,
+                ),
             ]
         ),
     ):
@@ -132,6 +140,12 @@ class AANetStereoMatcher(StereoMatcherBase):
 
     def run(self, left_rectified_image, right_rectified_image):
         import numpy as np
+        import cv2
+
+        left_rectified_image = cv2.cvtColor(left_rectified_image, cv2.COLOR_BGR2RGB)
+        right_rectified_image = cv2.cvtColor(right_rectified_image, cv2.COLOR_BGR2RGB)
+        left_rectified_image = left_rectified_image.astype(np.float32)
+        right_rectified_image = right_rectified_image.astype(np.float32)
 
         sample = {"left": left_rectified_image, "right": right_rectified_image}
         sample = self._transform(sample)
@@ -173,4 +187,4 @@ class AANetStereoMatcher(StereoMatcherBase):
 
         disp = pred_disp[0].detach().cpu().numpy()  # [H, W]
 
-        return (disp * self._config.disparity_multiplier).astype(np.uint16)
+        return disp.astype(np.float32)

@@ -1,3 +1,4 @@
+opencv-python
 rospkg
 catkin_pkg
 numpy

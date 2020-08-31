@@ -1,5 +1,13 @@
 <launch>
-    <node pkg="aanet_stereo_matching_ros" type="stereo_matching_node.py" name="aanet_stereo_matching_ros" output="screen" >
-      <rosparam command="load" file="$(find aanet_stereo_matching_ros)/config/aanet_params.yaml" />
+    <node pkg="aanet_stereo_matching_ros" type="stereo_matching_node.py" name="stereo_matcher" output="screen" >
+      <remap from="~left_rect_img" to="/outer/left/image_rectified_bgr8" />
+      <remap from="~right_rect_img" to="/outer/right/image_rectified_bgr8" />
+      <rosparam command="load" file="$(find aanet_stereo_matching_ros)/config/aanet+_params.yaml" />
+      <rosparam>
+        matcher_type: 0
+        gpu_idx: 0
+        synchronizer_type: 1
+        disparity_multiplier: 256.0
+      </rosparam>
     </node>
 </launch>

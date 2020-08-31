@@ -1,9 +1,9 @@
 aanet: {
   max_disp: 192,
-  feature_type: "aanet",
+  feature_type: "ganet",
   no_feature_mdconv: False,
   feature_pyramid: True,
-  feature_pyramid_network: True,
+  feature_pyramid_network: False,
   feature_similarity: "correlation",
   num_downsample: 2,
   aggregation_type: "adaptive",
@@ -14,6 +14,6 @@ aanet: {
   no_intermediate_supervision: True,
   deformable_groups: 2,
   mdconv_dilation: 2,
-  refinement_type: "stereodrnet",
-  model_path: "/absolute/path/to/aanet_sceneflow-5aa5a24e.pth"
+  refinement_type: "hourglass",
+  model_path: "/absolute/path/to/aanet+_sceneflow-d3e13ef0.pth"
 }

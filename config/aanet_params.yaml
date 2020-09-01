@@ -15,5 +15,4 @@ aanet: {
   deformable_groups: 2,
   mdconv_dilation: 2,
   refinement_type: "stereodrnet",
-  model_path: "/absolute/path/to/aanet_sceneflow-5aa5a24e.pth"
 }

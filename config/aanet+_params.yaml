@@ -15,5 +15,4 @@ aanet: {
   deformable_groups: 2,
   mdconv_dilation: 2,
   refinement_type: "hourglass",
-  model_path: "/absolute/path/to/aanet+_sceneflow-d3e13ef0.pth"
 }

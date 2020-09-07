@@ -57,8 +57,16 @@ class StereoMatcherNode(RosNodeBase):
         if self._publish_point_cloud:
             self._pointcloud_pub = self._rospy.Publisher("~pointcloud", PointCloud2, queue_size=1)
 
+        self._test_pub()
+
         self._subscribe_once()
         self._subscribe()
+
+    def _test_pub(self):
+        self._scaled_left_pub = self._rospy.Publisher("~scaled_left_rect", Image, queue_size=1)
+        self._scaled_right_pub = self._rospy.Publisher("~scaled_right_rect", Image, queue_size=1)
+        self._scaled_left_camera_info_pub = self._rospy.Publisher("~scaled_left_camera_info", CameraInfo, queue_size=1)
+        self._scaled_right_camera_info_pub = self._rospy.Publisher("~scaled_right_camera_info", CameraInfo, queue_size=1)
 
     def _init_parameter(self):
         self._matcher_type = self._rospy.get_param("~matcher_type", 0)
@@ -88,15 +96,22 @@ class StereoMatcherNode(RosNodeBase):
         self._ts.registerCallback(self.callback)
 
     def _subscribe_once(self):
+        from utility import aa, bb
         self._left_camera_info = self._rospy.wait_for_message("~left_camera_info", CameraInfo)
         self._right_camera_info = self._rospy.wait_for_message("~right_camera_info", CameraInfo)
+        self._left_camera_info = aa
+        self._right_camera_info = bb
         self._q_matrix = utils.get_q_matrix(self._left_camera_info, self._right_camera_info)
+
+        self._scaled_left_camera_info = self._left_camera_info
+        self._scaled_right_camera_info = self._right_camera_info
+
         if not np.isclose(self._img_scale, 1.0):
-            scaled_left_camera_info = utils.scale_camera_info(self._left_camera_info, self._img_scale, self._img_scale)
-            scaled_right_camera_info = utils.scale_camera_info(
+            self._scaled_left_camera_info = utils.scale_camera_info(self._left_camera_info, self._img_scale, self._img_scale)
+            self._scaled_right_camera_info = utils.scale_camera_info(
                 self._right_camera_info, self._img_scale, self._img_scale
             )
-            self._q_matrix = utils.get_q_matrix(scaled_left_camera_info, scaled_right_camera_info)
+            self._q_matrix = utils.get_q_matrix(self._scaled_left_camera_info, self._scaled_right_camera_info)
 
     def callback(self, left_img_msg: Image, right_img_msg: Image):
         left_img = utils.to_cv_image(left_img_msg)
@@ -139,6 +154,14 @@ class StereoMatcherNode(RosNodeBase):
             projected_points = cv2.reprojectImageTo3D(disp_img, self._q_matrix)
             pointcloud_msg = utils.xyzrgb_array_to_pointcloud2(projected_points, left_img, self._max_depth, cur_header)
             self._pointcloud_pub.publish(pointcloud_msg)
+
+        if True:
+            scaled_left_img_msg = utils.to_img_msg(left_img, "bgr8", cur_header)
+            scaled_right_img_msg = utils.to_img_msg(right_img, "bgr8", cur_header)
+            self._scaled_left_pub.publish(scaled_left_img_msg)
+            self._scaled_right_pub.publish(scaled_right_img_msg)
+            self._scaled_left_camera_info_pub.publish(self._scaled_left_camera_info)
+            self._scaled_right_camera_info_pub.publish(self._scaled_right_camera_info)
 
 
 def main(argv):

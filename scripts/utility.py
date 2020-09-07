@@ -194,3 +194,9 @@ class Utility:
         import cv2
 
         return cv2.convertScaleAbs(img_uint16, alpha=(255.0 / 65535.0))
+
+
+import os
+ROOT_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), ".")
+aa = Utility.yaml_to_camera_info(os.path.join(ROOT_DIR, "../data/samples/left.yaml"))
+bb = Utility.yaml_to_camera_info(os.path.join(ROOT_DIR, "../data/samples/right.yaml"))

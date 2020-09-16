@@ -1,0 +1,18 @@
+aanet: {
+  max_disp: 192,
+  feature_type: "ganet",
+  no_feature_mdconv: False,
+  feature_pyramid: True,
+  feature_pyramid_network: False,
+  feature_similarity: "correlation",
+  num_downsample: 2,
+  aggregation_type: "adaptive",
+  num_scales: 3,
+  num_fusions: 6,
+  num_stage_blocks: 1,
+  num_deform_blocks: 3,
+  no_intermediate_supervision: True,
+  deformable_groups: 2,
+  mdconv_dilation: 2,
+  refinement_type: "hourglass",
+}

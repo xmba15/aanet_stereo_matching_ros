@@ -1,0 +1,21 @@
+<launch>
+    <node pkg="aanet_stereo_matching_ros" type="stereo_matching_node.py" name="stereo_matcher" output="screen" >
+      <remap from="~left_rect_img" to="/outer/left/image_rectified_bgr8" />
+      <remap from="~right_rect_img" to="/outer/right/image_rectified_bgr8" />
+      <remap from="~left_camera_info" to="/outer/left/camera_info" />
+      <remap from="~right_camera_info" to="/outer/right/camera_info" />
+      <rosparam command="load" file="$(find aanet_stereo_matching_ros)/config/aanet+_params.yaml" />
+      <param name="aanet/model_path" value="$(find aanet_stereo_matching_ros)/data/aanet+_sceneflow-d3e13ef0.pth"></param>
+      <rosparam>
+        matcher_type: 0
+        gpu_idx: 0
+        synchronizer_type: 0
+        img_scale: 1.0
+        max_depth: 30.0
+        publish_point_cloud: False
+        disparity_multiplier: 256.0
+        use_raw_img: False
+        debug: True
+      </rosparam>
+    </node>
+</launch>

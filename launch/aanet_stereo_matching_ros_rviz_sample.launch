@@ -1,0 +1,27 @@
+<launch>
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find aanet_stereo_matching_ros)/rviz/sample.rviz" />
+
+  <arg name="rosbag_path" default="$(find aanet_stereo_matching_ros)/data/output.bag"/>
+  <node pkg="rosbag" type="play" name="rosbag_play" args="-l -r 0.1 $(arg rosbag_path)" output="screen" required="True"></node>
+
+  <arg name="aanet+_model_path" default="$(find aanet_stereo_matching_ros)/data/aanet+_kitti15-2075aea1.pth"/>
+  <node pkg="aanet_stereo_matching_ros" type="stereo_matching_node.py" name="stereo_matcher" output="screen" >
+    <remap from="~left_rect_img" to="/stereocam/left/image_rect" />
+    <remap from="~right_rect_img" to="/stereocam/right/image_rect" />
+    <remap from="~left_camera_info" to="/stereocam/left/camera_info" />
+    <remap from="~right_camera_info" to="/stereocam/right/camera_info" />
+    <rosparam command="load" file="$(find aanet_stereo_matching_ros)/config/aanet+_params.yaml" />
+    <param name="aanet/model_path" value="$(arg aanet+_model_path)"></param>
+    <rosparam>
+      matcher_type: 0
+      gpu_idx: 0
+      synchronizer_type: 0
+      img_scale: 0.4
+      max_depth: 200.0
+      publish_point_cloud: True
+      disparity_multiplier: 256.0
+      use_raw_img: False
+      debug: True
+    </rosparam>
+  </node>
+</launch>

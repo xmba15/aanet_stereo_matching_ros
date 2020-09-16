@@ -58,15 +58,15 @@ class AANetStereoMatcherConfig(object):
 
     model_path = ""  # Pretrained network
 
-    def __init__(self, rospy=None):
-        if rospy is None:
-            pass
+    def __init__(self, internal_rospy=None):
+        if internal_rospy is None:
+            return
 
         def _rospy_set(attr):
             object.__setattr__(
                 self,
                 attr,
-                rospy.get_param(
+                internal_rospy.get_param(
                     "~" + self.__name__ + "/" + attr,
                     object.__getattribute__(self, attr),
                 ),

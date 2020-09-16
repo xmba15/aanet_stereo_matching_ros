@@ -4,12 +4,14 @@ project(aanet_stereo_matching_ros)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
+  message_filters
 )
 
 catkin_package(
  CATKIN_DEPENDS
    rospy
    sensor_msgs
+   message_filters
 )
 
 include_directories(

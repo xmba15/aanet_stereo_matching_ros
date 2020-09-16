@@ -33,6 +33,12 @@ ROS package for stereo matching and point cloud projection using [AANet](https:/
 ## 🔨 How to Build ##
 ***
 Better to build with catkin or colcon
+Before building with ROS build tool, config current ROS workspace to use python in stereo_matching conda environment with
+
+```bash
+    catkin config -DPYTHON_EXECUTABLE=`which python` -DPYTHON_INCLUDE_DIR=`python -c "from __future__ import print_function; from distutils.sysconfig import get_python_inc; print(get_python_inc())"` -DPYTHON_LIBRARY=`python -c "from __future__ import print_function; import distutils.sysconfig as sysconfig; print(sysconfig.get_config_var('LIBDIR') + '/' + sysconfig.get_config_var('LDLIBRARY'))"`
+    catkin build
+```
 
 ## :running: How to Run ##
 ***

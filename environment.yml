@@ -1,7 +1,18 @@
 name: stereo_matching
+channels:
+  - pytorch
+  - anaconda
+  - defaults
 dependencies:
   - python >=3.6
-  - anaconda
+  - cudatoolkit=10.0
+  - cudnn=7.6.5
+  - pytorch=1.2.0
+  - torchvision=0.4.0
   - pip
   - pip:
-      - -r file:requirements.txt
+      - opencv-python
+      - rospkg
+      - catkin_pkg
+      - empy
+      - numpy

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import enum
+import sys
 
 
 __all__ = ["RosNodeBase"]
@@ -12,12 +13,13 @@ class SynchronizerType(enum.IntEnum):
 
 
 class RosNodeBase(object):
-    def __init__(self, rospy):
-        self._rospy = rospy
+    def __init__(self, internal_rospy):
+        self._rospy = internal_rospy
 
     def to_synchronizer(self, synchronizer_type: SynchronizerType, fs, queue_size=10, slop=0.1):
         if synchronizer_type > SynchronizerType.MAX:
-            raise Exception("Not supported synchronizer type\n")
+            self._rospy.logfatal("Not supported synchronizer type")
+            sys.exit()
 
         import message_filters
 

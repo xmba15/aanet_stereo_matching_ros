@@ -1,5 +1,15 @@
 #!/usr/bin/env python
-from sensor_msgs.msg import PointField, CameraInfo
+import cv2
+import copy
+import numpy as np
+import os
+import struct
+import yaml
+import sensor_msgs.point_cloud2 as pc2
+import std_msgs.msg
+from image_geometry import PinholeCameraModel
+from sensor_msgs.msg import PointField, CameraInfo, Image
+
 
 _FIELDS_XYZ = [
     PointField(name="x", offset=0, datatype=PointField.FLOAT32, count=1),
@@ -12,8 +22,8 @@ _FIELDS_XYZRGB = _FIELDS_XYZ + [PointField(name="rgba", offset=12, datatype=Poin
 class Utility:
     @staticmethod
     def yaml_to_camera_info(yaml_file_path):
-        from sensor_msgs.msg import CameraInfo
-        import yaml
+        if not os.path.isfile(yaml_file_path):
+            raise Exception("invalid yaml file path: {}".format(yaml_file_path))
 
         with open(yaml_file_path, "r") as file_handle:
             calib_data = yaml.safe_load(file_handle)
@@ -30,8 +40,6 @@ class Utility:
 
     @staticmethod
     def scale_camera_info(camera_info, scale_x, scale_y):
-        import copy
-
         output_camera_info = copy.deepcopy(camera_info)
 
         output_camera_info.width = int(camera_info.width * scale_x)
@@ -55,9 +63,6 @@ class Utility:
 
     @staticmethod
     def to_cv_image(image_msg):
-        import numpy as np
-        import cv2
-
         if image_msg is None:
             return None
 
@@ -85,8 +90,6 @@ class Utility:
 
     @staticmethod
     def to_img_msg(disp_img, encoding, header=None):
-        from sensor_msgs.msg import Image
-
         img_msg = Image()
         if header is not None:
             img_msg.header = header
@@ -106,11 +109,6 @@ class Utility:
 
     @staticmethod
     def xyzrgb_array_to_pointcloud2(projected_points, colors, max_depth, header=None):
-        import numpy as np
-        import sensor_msgs.point_cloud2 as pc2
-        import std_msgs.msg
-        import struct
-
         points_3d = []
 
         if len(colors.shape) == 2:
@@ -148,9 +146,6 @@ class Utility:
 
     @staticmethod
     def remap(raw_img, camera_info: CameraInfo):
-        import cv2
-        from image_geometry import PinholeCameraModel
-
         cam = PinholeCameraModel()
         cam.fromCameraInfo(camera_info)
         map_x, map_y = cv2.initUndistortRectifyMap(
@@ -168,7 +163,6 @@ class Utility:
     @staticmethod
     def get_q_matrix(left_camera_info: CameraInfo, right_camera_info: CameraInfo):
         # https://github.com/ros-perception/vision_opencv/blob/noetic/image_geometry/src/stereo_camera_model.cpp#L86
-        import numpy as np
 
         left_fx = left_camera_info.P[0]
         left_fy = left_camera_info.P[5]
@@ -191,6 +185,4 @@ class Utility:
 
     @staticmethod
     def uint16_to_uint8(img_uint16):
-        import cv2
-
         return cv2.convertScaleAbs(img_uint16, alpha=(255.0 / 65535.0))

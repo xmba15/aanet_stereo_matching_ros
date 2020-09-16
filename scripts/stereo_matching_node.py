@@ -29,21 +29,21 @@ class StereoMatcherNode(RosNodeBase):
         self._init_parameter()
 
         if self._matcher_type > MatcherType.MAX:
-            self._rospy.logfatal("Not supported stereo matcher\n")
+            self._rospy.logfatal("Not supported stereo matcher")
             sys.exit()
 
         self._MODEL_CLASS, self._MODEL_CONFIG_CLASS = _MODEL_FACTORY[self._matcher_type]
         self._model_config = self._MODEL_CONFIG_CLASS(rospy)
 
         if (self._model_config.model_path == "") or (not os.path.isfile(self._model_config.model_path)):
-            self._rospy.logfatal("Invalid model path {}\n".format(self._model_config.model_path))
+            self._rospy.logfatal("Invalid model path {}".format(self._model_config.model_path))
             sys.exit()
 
         if self._gpu_idx < 0:
             self._device = torch.device("cpu")
         else:
             if not torch.cuda.is_available():
-                self._rospy.logfatal("GPU environment not available\n")
+                self._rospy.logfatal("GPU environment not available")
                 sys.exit()
             else:
                 self._device = torch.device("cuda:{}".format(self._gpu_idx))
@@ -101,12 +101,12 @@ class StereoMatcherNode(RosNodeBase):
     def callback(self, left_img_msg: Image, right_img_msg: Image):
         left_img = utils.to_cv_image(left_img_msg)
         if left_img is None:
-            rospy.logwarn("Left image empty\n")
+            self._rospy.logwarn("Left image empty")
             return
 
         right_img = utils.to_cv_image(right_img_msg)
         if right_img is None:
-            rospy.logwarn("Right image empty\n")
+            self._rospy.logwarn("Right image empty")
             return
 
         if self._use_raw_img:

@@ -16,7 +16,7 @@ class StereoMatcherBase(abc.ABC):
         self._transform = transform
 
         if not os.path.exists(config.model_path):
-            raise Exception("{} does not exist\n".format(config.model_path))
+            raise Exception("{} does not exist".format(config.model_path))
 
     @abc.abstractmethod
     def run(self, left_rectified_image, right_rectified_image):
